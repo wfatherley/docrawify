@@ -26,7 +26,7 @@ jobs:
         python -m pip install .
     - name: Lint with pylint
       run: |
-        pylint src/docstring.py
+        pylint src/docrawify.py
     - name: Test with pytest
       run: |
         pytest
