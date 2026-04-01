@@ -3,7 +3,7 @@
 <hr>
 
 ## Summary
-Rawify or derawify docstrings in `.py` and `.ipynb` files, either through command line or programatically. The term "docstring" here refers to strings at the very top of module, class, coroutine, and function definitions. Strings that become docstrings during runtime, such as through dynamic class creation, are not modified by tools in library.
+Rawify or derawify docstrings in `.py` and `.ipynb` files, either through command line or programatically. The term "docstring" refers to strings at the very top of module, class, method, coroutine, and function definitions. Strings that become docstrings during runtime, such as through dynamic class creation, are not modified by tools in library.
 
 ## More information
 Some Python programs have embedded languages in their docstrings, such as \\\\LaTeX. These may introduce illegal escape sequences and trigger warnings or exceptions, depending on the Python version. Rawifying docstrings (i.e. converting `"this"` to `r"that"`) is a quick and effective solution to avoid the illegal escape character issue. This library provides a programmatic interface to rawify and de-rawify docstrings of modules, coroutine and function definitions, and class and method definitions that exist in Python source files (`.py` or `.pyi`), and Jupyter Notebooks (`.ipynb`).
