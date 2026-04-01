@@ -39,6 +39,7 @@ CLI usage example for rawifying then derawifying a package:
 import argparse
 import ast
 import pathlib
+import typing
 
 import nbformat
 
@@ -244,7 +245,7 @@ def handle_rawify(
     return source_lines
 
 
-def get_docstring_node(node: ast.AST) -> ast.Constant | None:
+def get_docstring_node(node: ast.AST) -> typing.Union[ast.Constant, None]:
     """Return a docstring node if the given node has a docstring.
 
     Accept an ``ast.AST`` instance, and return the node for its
@@ -254,7 +255,7 @@ def get_docstring_node(node: ast.AST) -> ast.Constant | None:
 
     :param node: an ``ast.AST`` object to handle
 
-    :return ast.Constant | None:
+    :return typing.Union(ast.Constant, None):
     """
 
     # escalate if node doesn't support docstrings
