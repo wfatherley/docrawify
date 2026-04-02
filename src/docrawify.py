@@ -161,7 +161,7 @@ def rawify(
     if path_obj.is_file():
         _rawify(path_obj, remove=remove, skip_hook=skip_hook)
         return
-    file_ext = "." + file_ext.lstrip(".")
+    file_ext = "." + file_ext.lstrip(".") if file_ext is not None else None
     for dir_path, _, file_names in path_obj.walk():
         for file_name in file_names:
             if file_ext is not None and not file_name.endswith(file_ext):

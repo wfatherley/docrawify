@@ -141,6 +141,18 @@ class TestRawifyStack(unittest.TestCase):
         docrawify.rawify(path_obj, skip_hook=lambda _: True)
         self.assertEqual(path_obj.out_data, test_files_map["not_raw.py"])
 
+    def test_file_ext_skips_rawify(self):
+        """verify file extensions are respected when rawifying"""
+        path_obj = PathDouble("fakedir")
+        docrawify.rawify(path_obj, file_ext="ipynb")
+        for po in path_obj.dir_files:
+            if po.name.ednswith(".py"):
+                self.assertEqual(po.out_data, None)
+            elif po.name == "not_raw.ipynb":
+                self.assertEqual(po.out_data, test_files_map["raw.ipynb"])
+            elif po.name == "fake_data.json":
+                self.assertEqual(po.out_data, None)
+
 
 class TestGetDocstringNode(unittest.TestCase):
     """unit tests against docrawify.get_docstring_node"""

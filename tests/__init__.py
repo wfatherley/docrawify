@@ -193,7 +193,7 @@ class PathDouble:
     """pathlib.Path test double"""
 
     def __truediv__(self, other):
-        self.dir_files.append(PathDouble(other.name))
+        self.dir_files.append(PathDouble(other))
         return self.dir_files[-1]
 
     def __init__(self, filename, *args, **kwargs):
@@ -219,7 +219,7 @@ class PathDouble:
         if self._is_file:
             return (_ for _ in [])
         for k in test_files_map:
-            yield (PathDouble("fakedir"), [], [PathDouble(k)])
+            yield (PathDouble("fakedir"), [], [k])
 
     def write_text(self, text: str, *args, **kwargs):
         self.out_data = text
