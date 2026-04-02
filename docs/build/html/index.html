@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>docrawify – rawify and de-rawify docstrings &#8212; docrawify 2026.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=9c5a5fc5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-docrawify">
+<span id="docrawify-rawify-and-de-rawify-docstrings"></span><h1><code class="docutils literal notranslate"><span class="pre">docrawify</span></code> – rawify and de-rawify docstrings<a class="headerlink" href="#module-docrawify" title="Link to this heading">¶</a></h1>
+<p>A simple docstring (de)rawify utility.</p>
+<p>Some Python programs have embedded languages in their docstrings, such
+as \LaTeX. These may introduce illegal escape sequences and trigger
+warnings or exceptions, depending on the Python version. Rawifying
+docstrings (i.e. converting <code class="docutils literal notranslate"><span class="pre">&quot;this&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">r&quot;that&quot;</span></code>) is a quick and
+effective solution to avoid the illegal escape character issue. This
+library provides a programmatic interface to rawify and de-rawify
+docstrings of modules, coroutine and function definitions, and class
+and method definitions that exist in Python source files
+(<code class="docutils literal notranslate"><span class="pre">.py</span></code> or <code class="docutils literal notranslate"><span class="pre">.pyi</span></code>), and Jupyter Notebooks (<code class="docutils literal notranslate"><span class="pre">.ipynb</span></code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Docstrings bound to objects in specialized ways, such as
+through dynamic class creation with <code class="docutils literal notranslate"><span class="pre">builtins.type</span></code>, may not be
+(de)rawified.</p>
+</div>
+<p>PIP-installing this library also provides a command line utility,
+<code class="docutils literal notranslate"><span class="pre">pydocrawify</span></code>, which accepts file paths, glob patterns, and
+directories as arguments. The utility modifies the target files in
+place, rawifying or de-rawifying their docstrings depending on the
+presence of the <code class="docutils literal notranslate"><span class="pre">--remove</span></code> flag.</p>
+<p>CLI usage example for rawifying and derawifying a single file:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pydocrawify<span class="w"> </span>path/to/file.py
+<span class="gp">$ </span>pydocrawify<span class="w"> </span>-r<span class="w"> </span>path/to/file.ipynb
+</pre></div>
+</div>
+<p>CLI usage example for rawifying then derawifying a package:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pydocrawify<span class="w"> </span>src/
+<span class="gp">$ </span>pydocrawify<span class="w"> </span>-r<span class="w"> </span>src/
+</pre></div>
+</div>
+<section id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<p>The following functions are responsible for loading and dumping source files:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.load_python_module">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">load_python_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#docrawify.load_python_module" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a source file and return its AST and source lines.</p>
+<p>Accept a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance representing a Python source
+file, and return a tuple whose first entry is the AST module for
+the source, and whose second entry is a list of source lines. This
+tuple is the basic data structure/media type used by the core
+rawify/derawify logic in the <a class="reference internal" href="#docrawify.handle_rawify" title="docrawify.handle_rawify"><code class="xref py py-func docutils literal notranslate"><span class="pre">docrawify.handle_rawify()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path_obj</strong> – a path object representing a source file</p>
+</dd>
+<dt class="field-even">Return tuple[ast.Module, list]<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.dump_python_module">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">dump_python_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#docrawify.dump_python_module" title="Link to this definition">¶</a></dt>
+<dd><p>Write source lines to a Python source file.</p>
+<p>Accept a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance representing a Python source
+file, and a list of source lines. Write the source lines to the
+file, overwriting the file’s previous content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_obj</strong> – a path object representing a source file</p></li>
+<li><p><strong>source_lines</strong> – a list of source lines to write to the file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return None<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.load_jupyter_notebook">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">load_jupyter_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#docrawify.load_jupyter_notebook" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a Jupyter Notebook and return its ASTs and sources lines.</p>
+<p>Accept a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance representing a Jupyter Notebook
+file, and return a tuple whose first entry is a list of AST modules
+(one for each code cell), and whose second entry is a list of
+source lines lists (one for each code cell). If the tuple is
+zipped, each pair represents a code cell’s AST and source lines,
+which tuple is the basic data structure/media type used by the core
+rawify/derawify logic in the <a class="reference internal" href="#docrawify.handle_rawify" title="docrawify.handle_rawify"><code class="xref py py-func docutils literal notranslate"><span class="pre">docrawify.handle_rawify()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path_obj</strong> – a path object representing a Jupyter Notebook file</p>
+</dd>
+<dt class="field-even">Return tuple[list[ast.Module], list[list]]<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.dump_jupyter_notebook">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">dump_jupyter_notebook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#docrawify.dump_jupyter_notebook" title="Link to this definition">¶</a></dt>
+<dd><p>Write source lines to a Jupyter Notebook file.</p>
+<p>Accept a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance representing a Jupyter Notebook
+file, and a list of source lines lists. Serially write each source
+lines list to the file’s code cells, overwriting the previous
+content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_obj</strong> – a path object representing a source file</p></li>
+<li><p><strong>source_lines</strong> – a list of source lines lists to write</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return None<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<p>The following functions are responsible for (de)rawifying docstrings based on file type:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.rawify">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">rawify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_ext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#docrawify.rawify" title="Link to this definition">¶</a></dt>
+<dd><p>Rawify or de-rawify docstrings in a file or directory.</p>
+<p>Accept a <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instance representing a source file (i.e.
+containing valid python) or directory (e.g. a package), and rawify
+or de-rawify all encountered docstrings depending on the value of
+the <code class="docutils literal notranslate"><span class="pre">remove</span></code> flag (default <code class="docutils literal notranslate"><span class="pre">False</span></code>). Modify the files in place.
+When walking a directory, ignore files not having one of <code class="docutils literal notranslate"><span class="pre">.py</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.pyi</span></code>, or <code class="docutils literal notranslate"><span class="pre">.ipynb</span></code> as its extension. Further, if <code class="docutils literal notranslate"><span class="pre">file_ext</span></code>
+is provided, ignore files not having it as the extension during the
+walk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_obj</strong> – source file/directory to modify</p></li>
+<li><p><strong>file_ext</strong> – file extension to filter by when walking</p></li>
+<li><p><strong>remove</strong> – flag to indicate de-rawify</p></li>
+<li><p><strong>skip_hook</strong> – callable evaluating to skip a given docstring</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return None<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify._rawify">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">_rawify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_obj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#docrawify._rawify" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve a path object’s content encoding and (de)rawify.</p>
+<p>Determine if the path object represents a Python source file or a
+Jupyter Notebook, and execute the corresponding load pattern (note
+Jupyter Notebooks are lists of modules of <code class="docutils literal notranslate"><span class="pre">ast</span></code>’s perspective).
+Perform (de)rawify and and dump the modified sources back to the
+file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_obj</strong> – a path object representing a source file</p></li>
+<li><p><strong>remove</strong> – a flag to indicate rawify or de-rawify</p></li>
+<li><p><strong>skip_hook</strong> – a callable used to skip a docstringable type</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return None<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.handle_rawify">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">handle_rawify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ast_tree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#docrawify.handle_rawify" title="Link to this definition">¶</a></dt>
+<dd><p>(De)rawify docstrings in a module and return modified sources.</p>
+<p>Accept and <code class="docutils literal notranslate"><span class="pre">ast.Module</span></code> instance and a list of its corresponding
+source lines, and prepend the character <code class="docutils literal notranslate"><span class="pre">r</span></code> onto each docstring
+without one, in place. If parameter <code class="docutils literal notranslate"><span class="pre">remove</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>
+(default <code class="docutils literal notranslate"><span class="pre">False</span></code>), remove any <code class="docutils literal notranslate"><span class="pre">r</span></code> found prepended to a
+docstring, in place. Return the possibly modified source lines
+list.</p>
+<p>If provided, call parameter <code class="docutils literal notranslate"><span class="pre">skip_hook</span></code> with each docstringable
+AST node found in the AST module. If the return value is truthy,
+skip the (de)rawify steps for that node, else do not skip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ast_tree</strong> – an AST module instance</p></li>
+<li><p><strong>source_lines</strong> – a list of source lines</p></li>
+<li><p><strong>remove</strong> – a flag to indicate rawify or de-rawify</p></li>
+<li><p><strong>skip_hook</strong> – a callable used to skip a docstringable type</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return list<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="docrawify.get_docstring_node">
+<span class="sig-prename descclassname"><span class="pre">docrawify.</span></span><span class="sig-name descname"><span class="pre">get_docstring_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AST</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Constant</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#docrawify.get_docstring_node" title="Link to this definition">¶</a></dt>
+<dd><p>Return a docstring node if the given node has a docstring.</p>
+<p>Accept an <code class="docutils literal notranslate"><span class="pre">ast.AST</span></code> instance, and return the node for its
+docstring if it has one, or return <code class="docutils literal notranslate"><span class="pre">None</span></code>. Raise <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> if
+the given node is not of a type that can have docstrings (e.g. a
+statement node like <code class="docutils literal notranslate"><span class="pre">ast.If</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – an <code class="docutils literal notranslate"><span class="pre">ast.AST</span></code> object to handle</p>
+</dd>
+<dt class="field-even">Return typing.Union(ast.Constant, None)<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Will Fatherley.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
