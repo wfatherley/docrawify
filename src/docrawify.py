@@ -135,7 +135,10 @@ def dump_jupyter_notebook(path_obj: pathlib.Path, sources: list[list]) -> None:
 
 
 def rawify(
-    path_obj: pathlib.Path, remove: bool = False, skip_hook: callable = None
+    path_obj: pathlib.Path,
+    file_ext: str = None,
+    remove: bool = False,
+    skip_hook: callable = None
 ) -> None:
     """Rawify or de-rawify docstrings in a file or directory.
 
@@ -144,9 +147,12 @@ def rawify(
     or de-rawify all encountered docstrings depending on the value of
     the ``remove`` flag (default ``False``). Modify the files in place.
     When walking a directory, ignore files not having one of ``.py``,
-    ``.pyi``, or ``.ipynb`` as its extension.
+    ``.pyi``, or ``.ipynb`` as its extension. Further, if ``file_ext``
+    is provided, ignore files not having it as the extension during the
+    walk.
 
     :param path_obj: source file/directory to modify
+    :param file_ext: file extension to filter by when walking
     :param remove: flag to indicate de-rawify
     :param skip_hook: callable evaluating to skip a given docstring
 
@@ -155,8 +161,11 @@ def rawify(
     if path_obj.is_file():
         _rawify(path_obj, remove=remove, skip_hook=skip_hook)
         return
+    file_ext = "." + file_ext.lstrip(".")
     for dir_path, _, file_names in path_obj.walk():
         for file_name in file_names:
+            if file_ext is not None and not file_name.endswith(file_ext):
+                continue
             sub_path_obj = dir_path / file_name
             _rawify(sub_path_obj, remove=remove, skip_hook=skip_hook)
 
@@ -294,6 +303,14 @@ args_parser.add_argument(
     help="flag indicating that docstrings should be de-rawifyed",
 )
 args_parser.add_argument(
+    "extension",
+    nargs="?",
+    help=(
+        'handle only files with this extension when walking a directory, '
+        'one of py, pyi, or ipynb (optional)'
+    )
+)
+args_parser.add_argument(
     "locations", nargs="+", help="file, glob, or directory to (de)rawify"
 )
 
@@ -304,7 +321,7 @@ def main() -> None:
 
     for location in args.locations:
         for path_obj in pathlib.Path().glob(location):
-            rawify(path_obj, remove=args.remove)
+            rawify(path_obj, file_ext=args.extension, remove=args.remove)
 
 
 if __name__ == "__main__":

@@ -11,24 +11,46 @@ Some Python programs have embedded languages in their docstrings, such as \\\\La
 PIP-installing this library also provides a command line utility, `pydocrawify`, which accepts file paths, glob patterns, and directories as arguments. The utility modifies the target files in place, rawifying or de-rawifying their docstrings depending on the presence of the `--remove` flag.
 
 ## Usage
-CLI usage for rawifying or derawifying a single file:
+CLI usage for rawifying or derawifying a single file or sets of files:
 
 ```shell
+$ # single file usage
 $ pydocrawify path/to/file.py
-$ pydocrawify -r path/to/file.ipynb
+$ pydocrawify -r path/to/file.py
+$
+$ # all notebooks in cwd
+$ pydocrawify *.ipynb
+$ pydocrawify -r *.ipynb
+$
+$ # does nothing (no .py(i) or .ipynb extension)
+$ pydocrawify ~/.ssh/*
+$
+$ # # all .py(i) and .ipynb files in cwd
+$ pydocrawify *
+$ pydocrawify -r *
 ```
 
-CLI usage for rawifying then derawifying a package:
+CLI usage for rawifying then derawifying a package/tree (based on `os.walk`):
 
 ```shell
+$ # all .py(i) and .ipynb files in entire tree rooted at src
 $ pydocrawify src/
 $ pydocrawify -r src/
 $
-$ # just .py files, no .ipynb
-$ pydocrawify *.py
+$ # only .py files in entire tree rooted at src
+$ pydocrawify py src/
+$ pydocrawify -r py src/
+$
+$ # only .py files in entire tree rooted at src
+$ pydocrawify pyi src/
+$ pydocrawify -r pyi src/
+$
+$ # only .ipynb in files entire tree rooted at src
+$ pydocrawify ipynb src/
+$ pydocrawify -r ipynb src/
 ```
 
-Programmatic usage is based on `pathlib.Path` objects:
+Programmatic usage is based on `pathlib.Path` objects. Here are two usage examples:
 
 ```python
 import pathlib
@@ -36,13 +58,34 @@ import pathlib
 import docrawify
 
 
-my_pymod_file = pathlib.Path("path/to/mypymod.py)
+# high level patterns
+# ===================
 
-# rawify docstrings
-docrawify.rawify(my_pymod_file)
+# rawify/de-rawify single file
+file_obj = pathlib.Path("path/to/mypymod.py")
+docrawify.rawify(file_obj)
+docrawify.rawify(file_obj, remove=True)
 
-# derawify docstring
-docrawify.rawify(my_pymod_file, remove=True)
+# rawify/de-rawify .py(i) and .ipynb files in a tree of files
+file_obj = pathlib.Path("path/to/mypackage")
+docrawify.rawify(file_obj)
+docrawify.rawify(file_obj, remove=True)
+
+
+# low level pattern
+# =================
+
+file_obj = pathlib.Path("path/to/mypymod.py")
+
+# low-level "transfer encoding" of ast tree and source lines
+ast_tree, source_lines = docrawify.load_python_module(file_obj)
+
+# rawify (produce new source lines with docstrings rawified)
+rawified_source_lines = docrawify.handle_rawify(ast_tree, source_lines)
+
+# overwrite the file with rawified source lines
+docrawify.dump_python_module(file_obj, rawified_source_lines)
+
 ```
 
 See [reference documentation]() for more information on the programmatic API.
