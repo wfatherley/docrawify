@@ -146,7 +146,7 @@ class TestRawifyStack(unittest.TestCase):
         path_obj = PathDouble("fakedir")
         docrawify.rawify(path_obj, file_ext="ipynb")
         for po in path_obj.dir_files:
-            if po.name.ednswith(".py"):
+            if po.name.endswith(".py"):
                 self.assertEqual(po.out_data, None)
             elif po.name == "not_raw.ipynb":
                 self.assertEqual(po.out_data, test_files_map["raw.ipynb"])
