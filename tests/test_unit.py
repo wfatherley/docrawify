@@ -127,11 +127,11 @@ class TestRawifyStack(unittest.TestCase):
             elif po.name == "not_raw.py":
                 self.assertEqual(po.out_data, test_files_map["raw.py"])
             elif po.name == "raw.py":
-                self.assertEqual(po.out_data, test_files_map["not_raw.py"])
+                self.assertEqual(po.out_data, test_files_map["raw.py"])
             elif po.name == "not_raw.ipynb":
                 self.assertEqual(po.out_data, test_files_map["raw.ipynb"])
             elif po.name == "raw.ipynb":
-                self.assertEqual(po.out_data, test_files_map["not_raw.ipynb"])
+                self.assertEqual(po.out_data, test_files_map["raw.ipynb"])
             else:
                 self.fail(f"unexpected file {po.name} found in directory walk")
 
