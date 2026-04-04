@@ -90,37 +90,44 @@ class TestRawifyStack(unittest.TestCase):
     def test_single_module_is_rawified(self):
         """verify a single module is rawified"""
         path_obj = PathDouble("not_raw.py")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj)
         self.assertEqual(path_obj.out_data, test_files_map["raw.py"])
 
     def test_single_notebook_is_rawified(self):
         """verify a single notebook is rawified"""
         path_obj = PathDouble("not_raw.ipynb")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj)
         self.assertEqual(path_obj.out_data, test_files_map["raw.ipynb"])
 
     def test_single_module_is_derawified(self):
         """verify a single module is de-rawified"""
         path_obj = PathDouble("raw.py")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj, remove=True)
         self.assertEqual(path_obj.out_data, test_files_map["not_raw.py"])
 
     def test_single_notebook_is_derawified(self):
         """verify a single notebook is de-rawified"""
         path_obj = PathDouble("raw.ipynb")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj, remove=True)
         self.assertEqual(path_obj.out_data, test_files_map["not_raw.ipynb"])
 
     def test_single_incompatible_file_is_skipped(self):
         """verify a single incompatible file is skipped"""
         path_obj = PathDouble("fake_data.json")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj)
         self.assertEqual(path_obj.out_data, None)
 
     def test_directory_is_walked_and_files_are_rawified_or_derawified(self):
         """verify a directory is walked and files are rawified or derawified"""
         path_obj = PathDouble("fakedir")
+        self.assertFalse(path_obj.dir_files)
         docrawify.rawify(path_obj)
+        self.assertTrue(path_obj.dir_files)
         for po in path_obj.dir_files:
             if po.name == "fake_data.json":
                 self.assertEqual(po.out_data, None)
@@ -138,13 +145,16 @@ class TestRawifyStack(unittest.TestCase):
     def test_skip_hook_skips(self):
         """verify the skip hook is called and respected"""
         path_obj = PathDouble("not_raw.py")
+        self.assertEqual(path_obj.out_data, None)
         docrawify.rawify(path_obj, skip_hook=lambda _: True)
         self.assertEqual(path_obj.out_data, test_files_map["not_raw.py"])
 
     def test_file_ext_skips_rawify(self):
         """verify file extensions are respected when rawifying"""
         path_obj = PathDouble("fakedir")
+        self.assertFalse(path_obj.dir_files)
         docrawify.rawify(path_obj, file_ext="ipynb")
+        self.assertTrue(path_obj.dir_files)
         for po in path_obj.dir_files:
             if po.name.endswith(".py"):
                 self.assertEqual(po.out_data, None)
