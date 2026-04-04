@@ -219,7 +219,7 @@ class PathDouble:
         if self._is_file:
             return (_ for _ in [])
         for k in test_files_map:
-            yield (PathDouble("fakedir"), [], [k])
+            yield (self, [], [k])
 
     def write_text(self, text: str, *args, **kwargs):
         self.out_data = text
