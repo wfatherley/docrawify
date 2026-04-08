@@ -35,6 +35,51 @@ CLI usage example for rawifying then derawifying a package:
     $ pydocrawify src/
     $ pydocrawify -r src/
 
+
+It's also possible to filter by file extension:
+
+.. code-block:: console
+
+    $ # files with .py extension in tree rooted as src
+    $ pydocrawify py src/
+
+Here are some programmatic usage examples:
+
+.. code-block:: python
+
+    import pathlib
+
+    import docrawify
+
+
+    # high level patterns
+    # ===================
+
+    # rawify/de-rawify single file
+    file_obj = pathlib.Path("path/to/mypymod.py")
+    docrawify.rawify(file_obj)
+    docrawify.rawify(file_obj, remove=True)
+
+    # rawify/de-rawify .py(i) and .ipynb files in a tree of files
+    file_obj = pathlib.Path("path/to/mypackage")
+    docrawify.rawify(file_obj)
+    docrawify.rawify(file_obj, remove=True)
+
+
+    # low level pattern
+    # =================
+
+    file_obj = pathlib.Path("path/to/mypymod.py")
+
+    # "transfer encoding" is tuple of ast tree and source lines
+    ast_tree, source_lines = docrawify.load_python_module(file_obj)
+
+    # rawify (produce new source lines with docstrings rawified)
+    rawified_source_lines = docrawify.handle_rawify(ast_tree, source_lines)
+
+    # overwrite the file with rawified source lines
+    docrawify.dump_python_module(file_obj, rawified_source_lines)
+
 """
 import argparse
 import ast

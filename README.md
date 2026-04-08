@@ -6,20 +6,23 @@
 Rawify or derawify docstrings in `.py` and `.ipynb` files, either through command line or programatically. The term "docstring" refers to strings at the very top of module, class, method, coroutine, and function definitions. Strings that become docstrings during runtime, such as through dynamic class creation, are not modified by tools in library.
 
 ## Usage
-CLI usage (after `pip` install) for rawifying or derawifying a single file or sets of files:
+CLI usage (after PIP-install) for rawifying or derawifying a single file or sets of files:
 
 ```shell
 $ # single file usage
 $ pydocrawify path/to/file.py
 $ pydocrawify -r path/to/file.py
-$
+```
+```shell
 $ # all notebooks in cwd
 $ pydocrawify *.ipynb
 $ pydocrawify -r *.ipynb
-$
+```
+```shell
 $ # does nothing (no .py(i) or .ipynb extension)
 $ pydocrawify ~/.ssh/*
-$
+```
+```shell
 $ # # all .py(i) and .ipynb files in cwd
 $ pydocrawify *
 $ pydocrawify -r *
@@ -31,15 +34,18 @@ CLI usage for rawifying then derawifying a package/tree (based on `os.walk`):
 $ # all .py(i) and .ipynb files in entire tree rooted at src
 $ pydocrawify src/
 $ pydocrawify -r src/
-$
+```
+```shell
 $ # only .py files in entire tree rooted at src
 $ pydocrawify py src/
 $ pydocrawify -r py src/
-$
+```
+```shell
 $ # only .py files in entire tree rooted at src
 $ pydocrawify pyi src/
 $ pydocrawify -r pyi src/
-$
+```
+```shell
 $ # only .ipynb in files entire tree rooted at src
 $ pydocrawify ipynb src/
 $ pydocrawify -r ipynb src/
@@ -83,7 +89,7 @@ docrawify.dump_python_module(file_obj, rawified_source_lines)
 
 ```
 
-See [reference documentation]() for more information on the programmatic API.
+See [reference documentation](https://docrawify.readthedocs.io/en/latest/) for more information on the programmatic API.
 
 ## More information
 Some Python programs have embedded languages in their docstrings, such as \\\\LaTeX. These may introduce illegal escape sequences and trigger warnings or exceptions, depending on the Python version. Rawifying docstrings (i.e. converting `"this"` to `r"that"`) is a quick and effective solution to avoid the illegal escape character issue. This library provides a programmatic interface to rawify and de-rawify docstrings of modules, coroutine and function definitions, and class and method definitions that exist in Python source files (`.py` or `.pyi`), and Jupyter Notebooks (`.ipynb`).
