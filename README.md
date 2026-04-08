@@ -78,7 +78,7 @@ docrawify.rawify(file_obj, remove=True)
 
 file_obj = pathlib.Path("path/to/mypymod.py")
 
-# low-level "transfer encoding" of ast tree and source lines
+# "transfer encoding" is tuple of ast tree and source lines
 ast_tree, source_lines = docrawify.load_python_module(file_obj)
 
 # rawify (produce new source lines with docstrings rawified)
