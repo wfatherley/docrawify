@@ -142,6 +142,24 @@ class TestRawifyStack(unittest.TestCase):
             else:
                 self.fail(f"unexpected file {po.name} found in directory walk")
 
+        path_obj = PathDouble("fakedir")
+        self.assertFalse(path_obj.dir_files)
+        docrawify.rawify(path_obj, remove=True)
+        self.assertTrue(path_obj.dir_files)
+        for po in path_obj.dir_files:
+            if po.name == "fake_data.json":
+                self.assertEqual(po.out_data, None)
+            elif po.name == "not_raw.py":
+                self.assertEqual(po.out_data, test_files_map["not_raw.py"])
+            elif po.name == "raw.py":
+                self.assertEqual(po.out_data, test_files_map["not_raw.py"])
+            elif po.name == "not_raw.ipynb":
+                self.assertEqual(po.out_data, test_files_map["not_raw.ipynb"])
+            elif po.name == "raw.ipynb":
+                self.assertEqual(po.out_data, test_files_map["not_raw.ipynb"])
+            else:
+                self.fail(f"unexpected file {po.name} found in directory walk")
+
     def test_skip_hook_skips(self):
         """verify the skip hook is called and respected"""
         path_obj = PathDouble("not_raw.py")
